@@ -7,6 +7,15 @@ var utils = {
         var uuidV4 = require('uuid/v4');
         return uuidV4();
     },
+    getRandomCode: function(length){
+        var code = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$&";
+
+        for( var i=0; i < length; i++ )
+            code += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return code;
+    },
 };
 
 module.exports = utils;

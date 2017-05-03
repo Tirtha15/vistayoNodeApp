@@ -34,8 +34,14 @@ app.use(function(req, res, next){
   res.created = function(resData){
     res.status(201).send(resData);
   };
+  res.noContent = function(){
+    res.status(204).send();
+  };
   res.badRequest = function(resData){
     res.status(400).send(resData);
+  };
+  res.notFound = function(resData){
+    res.status(404).send(resData);
   };
   res.serverError = function(resData){
     res.status(500).send(resData);

@@ -8,7 +8,11 @@ router.get('/holidays/suggest', searchController.autoComplete);
 router.get('/holidays/theme/:keyword', searchController.themeSearch);
 router.get('/holidays/destination/:keyword', searchController.destinationSearch);
 
-router.post('/request-invite', inviteController.addRequest);
-router.get('/request-invite', inviteController.allRequest);
+//invite-request
+router.post('/invite/request', inviteController.addRequest);
+router.get('/admin/invite/request', inviteController.getRequest);
+router.get('/admin/invite/request/:requestId', inviteController.getRequest);
+router.delete('/admin/invite/request/:requestId', inviteController.deleteRequest);
+router.post('/admin/invite/request/:requestId/send', inviteController.sendInvite);
 
 module.exports = router;
