@@ -5,6 +5,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var config = require('./config');
+console.log("App starting in: ", config.ENV_NAME);
+
 //var index = require('./routes/index');
 //var users = require('./routes/users');
 
@@ -28,8 +31,14 @@ app.use(function(req, res, next){
   res.ok = function(resData){
     res.status(200).send(resData);
   };
+  res.created = function(resData){
+    res.status(201).send(resData);
+  };
   res.badRequest = function(resData){
     res.status(400).send(resData);
+  };
+  res.serverError = function(resData){
+    res.status(500).send(resData);
   };
   next();
 });

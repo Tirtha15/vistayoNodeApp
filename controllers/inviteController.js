@@ -1,5 +1,7 @@
 var utils = require('./../services/utils');
 
+var mongoDb = require('./../config/db').mongo;
+
 var inviteController = {
     addRequest: function(req, res){
         if(!req.body.emailId || !req.body.mobile)
@@ -20,24 +22,32 @@ var inviteController = {
                 msg: 'Invalid email'
             });
 
-        //insert to db
+        var inviteRequest = mongoDb.get('inviteRequest');
 
-        return res.ok({
-            emailId: req.body.emailId,
-            mobile: req.body.mobile
+        var toInsert = {
+            uuid: utils.uuid(),
+            email: req.body.emailId,
+            mobile: req.body.mobile,
+            status: 'pending'
+        };
+
+        inviteRequest.insert(toInsert, function(err, request){
+            if(err){
+                return res.serverError(err);
+            }
+
+            return res.created(request);
         });
     },
 
     allRequest: function(req, res){
+        var inviteRequest = mongoDb.get('inviteRequest');
 
-        var dataToReturn = [{
-            emailId: 'tirtha@gmail.com',
-            mobile: '9038757810',
-            status: 'pending'
-        }];
-
-
-        return res.ok(dataToReturn);
+        inviteRequest.find({},{}, function(err, requests){
+            if(err)
+              return res.serverError(err);
+            return res.ok(requests);
+        });
     }
 };
 
