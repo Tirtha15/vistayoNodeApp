@@ -25,4 +25,7 @@ router.post('/admin/invite/request/:requestId/send', [isAuthenticated, isAdmin],
 router.post('/user/signup', userController.signup);
 router.post('/user/login', userController.login);
 
+//individual user
+router.get('/me', [isAuthenticated], userController.me);
+
 module.exports = router;

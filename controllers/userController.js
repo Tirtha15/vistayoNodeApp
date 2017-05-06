@@ -6,6 +6,8 @@ var config = require('./../config');
 
 var mongoDb = require('./../config/db').mongo;
 
+var userHiddenFields = ['_id', 'password', 'aToken'];
+
 var userController = {
     signup: function(req, res){
         var userFeilds = ['name', 'emailId', 'mobile', 'password', 'isAdmin'];
@@ -146,7 +148,27 @@ var userController = {
 
             return res.ok(toReturn);
         });
-    }
+    },
+
+    me: function(req, res){
+        var userUuid = req.user.uuid;
+        var userCol = mongoDb.get('user');
+
+        userCol.findOne({
+            uuid: userUuid
+        },{}, function(err, user){
+            if(err)
+                return res.serverError(err);
+            if(!user)
+                return res.badRequest({
+                    code: 'BAD_REQUEST',
+                    msg: 'Invalid user'
+                });
+
+            var toReturn = _.omit(user, userHiddenFields);
+            return res.ok(toReturn);
+        });
+    },
 };
 
 module.exports = userController;
