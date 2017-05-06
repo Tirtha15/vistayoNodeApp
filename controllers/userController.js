@@ -140,7 +140,9 @@ var userController = {
                 }
                 return res.serverError(err);
             }
-            var toReturn = {aToken: results.generateToken};
+            var toReturn = {
+                aToken: results.generateToken
+            };
 
             return res.ok(toReturn);
         });

@@ -46,6 +46,9 @@ app.use(function(req, res, next){
   res.serverError = function(resData){
     res.status(500).send(resData);
   };
+  res.notAuthorized = function(resData){
+     res.status(401).send(resData);
+  }
   next();
 });
 
