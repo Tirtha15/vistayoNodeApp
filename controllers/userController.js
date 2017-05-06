@@ -150,6 +150,25 @@ var userController = {
         });
     },
 
+    logout: function(req, res){
+        var userUuid = req.user.uuid;
+        var userCol = mongoDb.get('user');
+
+        userCol.findOneAndUpdate({
+            uuid: userUuid
+        },{
+            $unset: {
+                aToken: ''
+            }
+        },{}, function(err, updatedUser){
+            if(err)
+                return res.serverError(err);
+            return res.ok({
+                logout: 'success'
+            });
+        });
+    },
+
     me: function(req, res){
         var userUuid = req.user.uuid;
         var userCol = mongoDb.get('user');

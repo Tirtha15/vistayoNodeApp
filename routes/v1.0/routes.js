@@ -24,6 +24,7 @@ router.post('/admin/invite/request/:requestId/send', [isAuthenticated, isAdmin],
 //user registration and authentication
 router.post('/user/signup', userController.signup);
 router.post('/user/login', userController.login);
+router.post('/user/logout', [isAuthenticated], userController.logout);
 
 //individual user
 router.get('/me', [isAuthenticated], userController.me);
