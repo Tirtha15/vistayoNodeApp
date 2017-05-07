@@ -10,7 +10,7 @@ var userHiddenFields = ['_id', 'password', 'aToken'];
 
 var userController = {
     signup: function(req, res){
-        var userFeilds = ['name', 'emailId', 'mobile', 'password', 'isAdmin'];
+        var userFeilds = ['name', 'emailId', 'mobile', 'password'];
 
         var user = _.pick(req.body, userFeilds);
 
@@ -19,6 +19,78 @@ var userController = {
               code: 'BAD_REQUEST',
               msg: 'mandatory fields are missing'
           });
+
+        if(user.mobile && user.mobile.length !== 10)
+            return res.badRequest({
+                code: 'BAD_REQUEST',
+                msg: 'Invalid mobile number'
+            });
+
+        if(user.emailId && !utils.validateEmail(user.emailId))
+            return res.badRequest({
+                code: 'BAD_REQUEST',
+                msg: 'Invalid email'
+            });
+
+        if(!utils.validatePassword(user.password))
+            return res.badRequest({
+                code: 'BAD_REQUEST',
+                msg: 'Invalid password'
+            });
+
+        var userCol = mongoDb.get('user');
+
+        async.auto({
+            findUser: function(cb){
+                userCol.findOne({
+                    mobile: user.mobile
+                },{}, function(err, user){
+                    if(err)
+                        return cb(err);
+                    if(user)
+                        return cb({
+                            code: 'BAD_REQUEST',
+                            msg: 'User already exist for mobile:' + user.mobile
+                        });
+                    return cb();
+                });
+            },
+            createUser: ['findUser', function(results, cb){
+                var toInsert = user;
+                toInsert.uuid = utils.uuid();
+                toInsert.password = utils.hashPassword(user.password);
+
+                userCol.insert(toInsert, function(err, createdUser){
+                    if(err)
+                        return cb(err);
+                    return cb(null, createdUser);
+                });
+            }]
+        }, function(err, results){
+            if(err){
+                if(err.code && err.code === 'NOT_FOUND'){
+                    return res.notFound(err);
+                }
+                if(err.code && err.code === 'BAD_REQUEST'){
+                    return res.badRequest(err);
+                }
+                return res.serverError(err);
+            }
+
+            return res.ok(results.createUser);
+        });
+    },
+
+    adminSignup: function(req, res){
+        var userFeilds = ['name', 'emailId', 'mobile', 'password', 'isAdmin'];
+
+        var user = _.pick(req.body, userFeilds);
+
+        if(!user.mobile || !user.emailId || !user.password)
+            return res.badRequest({
+                code: 'BAD_REQUEST',
+                msg: 'mandatory fields are missing'
+            });
 
         if(user.mobile && user.mobile.length !== 10)
             return res.badRequest({
