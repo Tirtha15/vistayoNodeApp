@@ -10,7 +10,7 @@ var userHiddenFields = ['_id', 'password', 'aToken'];
 
 var userController = {
     signup: function(req, res){
-        var userFeilds = ['name', 'emailId', 'mobile', 'password'];
+        var userFeilds = ['name', 'emailId', 'mobile', 'password', 'registrationCode'];
 
         var user = _.pick(req.body, userFeilds);
 
@@ -55,7 +55,30 @@ var userController = {
                     return cb();
                 });
             },
-            createUser: ['findUser', function(results, cb){
+            inviteRequest: function(cb){
+                var inviteRequest = mongoDb.get('inviteRequest');
+                inviteRequest.findOne({
+                    mobile: user.mobile,
+                    status: 'sent'
+                },{}, function(err, request){
+                    if(err)
+                        return cb(err);
+                    if(!request)
+                        return cb({
+                            code: 'BAD_REQUEST',
+                            msg: 'Invite does not exist for mobile:' + req.body.mobile
+                        });
+
+                    if(request.registrationCode !== user.registrationCode)
+                        return cb({
+                            code: 'BAD_REQUEST',
+                            msg: 'Invalid registration code'
+                        });
+
+                    return cb(null, request);
+                });
+            },
+            createUser: ['findUser', 'inviteRequest', function(results, cb){
                 var toInsert = user;
                 toInsert.uuid = utils.uuid();
                 toInsert.password = utils.hashPassword(user.password);
@@ -64,6 +87,22 @@ var userController = {
                     if(err)
                         return cb(err);
                     return cb(null, createdUser);
+                });
+            }],
+            inviteStatusUpdate: ['createUser', function(results, cb){
+                var inviteRequest = mongoDb.get('inviteRequest');
+                var toUpdate = {
+                    status: 'completed',
+                    userUuid: results.createUser.uuid
+                };
+                inviteRequest.findOneAndUpdate({
+                    uuid: results.inviteRequest.uuid
+                }, {
+                    $set: toUpdate
+                }, {}, function(err, updatedRequest){
+                    if(err)
+                        return cb(err);
+                    return cb(null, updatedRequest);
                 });
             }]
         }, function(err, results){
