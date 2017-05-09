@@ -6,6 +6,9 @@ var config = {
        username: 'tirtha15',
        password: 'dbAdmin4app',
        queryParams: 'ssl=true&replicaSet=Cluster0-shard-0&authSource=admin'
+    },
+    elasticsearch: {
+        host: 'localhost:9200'
     }
 };
 
