@@ -10,7 +10,7 @@ var esIndex = config.CONSTANTS.autoCompleteEsIndex;
 var esType = config.CONSTANTS.autoCompleteEsType;
 
 function main(){
-    console.log("Indexing destination and themes for autocomplete", esType, esIndex);
+    console.log("Indexing documents on index: " + esIndex + " type: " + esType);
 
     async.auto({
         checkIndex: function(cb){
