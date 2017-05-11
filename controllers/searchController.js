@@ -51,6 +51,9 @@ var searchController  = {
     themeSearch: function(req, res){
         var keyword = req.params.keyword;
 
+        var from = (req.query.from && req.query.from > 0) ? parseInt(req.query.from ) : config.CONSTANTS.from;
+        var limit = (req.query.limit && req.query.limit > 0) ? parseInt(req.query.limit ) : config.CONSTANTS.limit;
+
         var idealForSelections = req.query.idealFor ? req.query.idealFor.split(',') : null;
         var monthOfTravelSelections = req.query.monthOfTravel ? req.query.monthOfTravel.split(',') : null;
         var attractionsSelections = req.query.attractions ? req.query.attractions.split(',') : null;
@@ -102,7 +105,7 @@ var searchController  = {
                 if(attractionsSelections)
                     findCriteria.attractions = { $in: attractionsSelections};
 
-                destinationsCol.find(findCriteria, {}, function(err, matchingDestination){
+                destinationsCol.find(findCriteria, {sort: {slug: 1}, skip: from, limit: limit}, function(err, matchingDestination){
                     if(err)
                       return cb(err);
                     return cb(null, matchingDestination);
@@ -128,6 +131,9 @@ var searchController  = {
     destinationSearch: function(req, res){
         var keyword = req.params.keyword;
 
+        var from = (req.query.from && req.query.from > 0) ? parseInt(req.query.from ) : config.CONSTANTS.from;
+        var limit = (req.query.limit && req.query.limit > 0) ? parseInt(req.query.limit ) : config.CONSTANTS.limit;
+
         async.auto({
             destination: function(cb){
                 var destinationsCol = mongoDb.get('destinations');
@@ -150,7 +156,7 @@ var searchController  = {
 
                 packagesCol.find({
                     destination: results.destination.uuid
-                }, {}, function(err, packages){
+                }, {sort: {name: 1}, skip: from, limit: limit}, function(err, packages){
                     if(err)
                       return cb(err);
                     return cb(null, packages);

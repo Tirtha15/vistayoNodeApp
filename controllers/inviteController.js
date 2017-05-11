@@ -79,7 +79,7 @@ var inviteController = {
         var findCriteria = {};
 
         var from = (req.query.from && req.query.from > 0) ? parseInt(req.query.from ) : config.CONSTANTS.from;
-        var limit = (req.query.limit && req.query.limit > 0) ? parseInt(req.query.limit ) : config.CONSTANTS.from;
+        var limit = (req.query.limit && req.query.limit > 0) ? parseInt(req.query.limit ) : config.CONSTANTS.limit;
 
         if(requestId){
             findCriteria.uuid = requestId;
@@ -95,7 +95,9 @@ var inviteController = {
                   code: 'NOT_FOUND',
                   msg: 'Invalid criteria'
               });
-            return res.ok(requests);
+
+            var toReturn = requestId ? requests[0] : requests;
+            return res.ok(toReturn);
         });
     },
 
