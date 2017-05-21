@@ -82,6 +82,8 @@ var userController = {
                 var toInsert = user;
                 toInsert.uuid = utils.uuid();
                 toInsert.password = utils.hashPassword(user.password);
+                toInsert.createdAt = new Date();
+                toInsert.updatedAt = new Date();
 
                 userCol.insert(toInsert, function(err, createdUser){
                     if(err)
@@ -170,6 +172,8 @@ var userController = {
                 var toInsert = user;
                 toInsert.uuid = utils.uuid();
                 toInsert.password = utils.hashPassword(user.password);
+                toInsert.createdAt = new Date();
+                toInsert.updatedAt = new Date();
 
                 userCol.insert(toInsert, function(err, createdUser){
                     if(err)
@@ -235,7 +239,8 @@ var userController = {
                     uuid: results.findUser.uuid
                 },{
                     $set: {
-                        aToken: results.generateToken
+                        aToken: results.generateToken,
+                        updatedAt: new Date()
                     }
                 },{}, function(err, updatedUser){
                     if(err)
@@ -269,7 +274,8 @@ var userController = {
             uuid: userUuid
         },{
             $unset: {
-                aToken: ''
+                aToken: '',
+                updatedAt: new Date()
             }
         },{}, function(err, updatedUser){
             if(err)
