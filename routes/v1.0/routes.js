@@ -5,6 +5,7 @@ var searchController = require('./../../controllers/searchController');
 var inviteController = require('./../../controllers/inviteController');
 var userController = require('./../../controllers/userController');
 var packageController = require('./../../controllers/packageController');
+var requestController = require('./../../controllers/requestController');
 
 //middlewares
 var isAuthenticated = require('./../../middlewares/isAuthenticated');
@@ -15,6 +16,9 @@ router.get('/holidays/theme/:keyword', searchController.themeSearch);
 router.get('/holidays/destination/:keyword', searchController.destinationSearch);
 router.get('/holidays/package/:packageId', packageController.packageDetails);
 
+router.post('/holidays/request', [isAuthenticated], requestController.newRequest);
+router.post('/holidays/request/:requestId', [isAuthenticated], requestController.updateRequest);
+
 //invite-request
 router.post('/invite/request', inviteController.addRequest);
   //admin only
@@ -22,6 +26,10 @@ router.get('/admin/invite/request',[isAuthenticated, isAdmin], inviteController.
 router.get('/admin/invite/request/:requestId', [isAuthenticated, isAdmin], inviteController.getRequest);
 router.delete('/admin/invite/request/:requestId', [isAuthenticated, isAdmin], inviteController.deleteRequest);
 router.post('/admin/invite/request/:requestId/send', [isAuthenticated, isAdmin], inviteController.sendInvite);
+
+router.get('/admin/holidays/request',[isAuthenticated, isAdmin], requestController.getRequest);
+router.get('/admin/holidays/request/:requestId', [isAuthenticated, isAdmin], requestController.getRequest);
+router.post('/admin/holidays/request/:requestId/send', [isAuthenticated, isAdmin], requestController.sendToVendor);
 
 //user registration and authentication
 router.post('/user/signup', userController.signup);
