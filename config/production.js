@@ -8,7 +8,7 @@ var config = {
        queryParams: 'ssl=true&replicaSet=Cluster0-shard-0&authSource=admin'
     },
     elasticsearch: {
-        host: 'localhost:9200'
+        host: 'https://y9m9w61lmt:47r7dkwjw9@first-cluster-1084336753.us-east-1.bonsaisearch.net'
     }
 };
 
